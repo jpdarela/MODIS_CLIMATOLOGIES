@@ -24,8 +24,8 @@ get_meta_data <- function(filename)
 	# Example : from "MOD11A2.MRTWEB.A2000217.005.LST_Night_1km" to  "a00217lst_ni"
 	# if you want to use the former form of the filename then you might to change the
 	# above block of code...
-																#         10        20        30        40
-																#12345678901234567890123456789012345678901	
+	#                                                                     10        20        30        40
+        #                                                            12345678901234567890123456789012345678901	
 	# For example: assuming that your filenames are in the form "MOD11A2.MRTWEB.A2000217.005.LST_Night_1km"
 	# your 3 variables migth be assigned this way:
 
