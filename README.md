@@ -1,5 +1,5 @@
-##MODIS_CLIMATOLOGIES
-# DESCRIPTION:
+#MODIS_CLIMATOLOGIES
+## DESCRIPTION:
 **input:** MOD11A2 (Land Surface Temperature-LST, 8 days). Format: Geotiff.
 
 Put all LST images in a new folder. 
