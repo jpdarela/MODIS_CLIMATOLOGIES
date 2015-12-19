@@ -6,12 +6,15 @@ library(rgdal)
 library(dplyr)
 
 
-# This Script was developed in WINDOWS NT 6.3.9600
+# This R Script was developed in WINDOWS NT 6.3.9600
 # R version: 3.1.2 Pumpkin Helmet
 # Note the use of "\\" in paths 
 
+# 0 - Save the code (files: "calc_climat.R" and "temp_proc_kpr.R") in your computer (catch the path to it)
+# 0 - Save MODIS (as specified in "README.md") images in your computer. You must to save all images in one
+    # separeted folder (no other files than modis images)
 # 1 - Open a R interpreter. Note the requirements to the packages: raster, rgdal,dplyr and dependencies 
-# 2 - Set working directory to the folder where you save this script
+# 2 - Set working directory to the folder where you save this script (see lines 13 and (25 to 29))
 # 3 - Make shure that the file "calc_climat.R" is located at the same folder than this script
 # 4 - Call this script using "source" function: Like this: 
 ###                                                        > source("temp_calc_kpr.R")
@@ -22,11 +25,13 @@ library(dplyr)
 # images directory--- fill the variable "input_data_dir" with the pathway to your MOD11A2 images:
 input_data_dir <- "C:\\Estagio\\raw_datav2\\tidy_data_v2"
 
+#code directory --- it must be your 
+local_code_dir <- getwd()
+
 # new directory for lay results
 # change it if you want. Note the use of "\\" in paths 
-output_data_dir <- "C:\\Estagio"  
+output_data_dir <- "C:\\Estagio_jp"  
 
-filenames <- dir(input_data_dir)
 
 get_meta_data <- function(filename)
 {
@@ -67,6 +72,9 @@ get_meta_data <- function(filename)
 	result
 	## END OF FUNCTION DEFINITION
 }
+
+filenames <- dir(input_data_dir)
+
 
 counter <- 1
 for (filename in filenames)
@@ -122,7 +130,7 @@ get_layers <- function(data_struct_access, month_mode = FALSE,
 ## dataset <- get_layers(df, month_mode = T, all_dtm_mode = F, monthc=12, dtm='da')
 ## this assigns to "dataset" a RasterBrick object containing (all) day images for december
 
-get_layers2 <- function(dtm = 'da', directory = "C:\\Estagio\\raw_datav2\\tidy_data_v2")
+get_layers2 <- function(dtm = 'da', directory = input_data_dir)
 { 
 	curr_dir <- getwd()
 	setwd(directory)
@@ -238,7 +246,6 @@ for (i in years)
 
 #MONTHLY
 print("MONTHLY")
-outpath = "C:\\Estagio\\"
 outpath = paste(output_data_dir, "\\" , "results\\monthly", sep='')
 if (!file.exists(outpath)) dir.create(outpath, recursive=T)
 
@@ -254,8 +261,8 @@ for (j in months)
 	calc_stats(dataset_all, outpath, mode_c = 'monthly', tag=paste('all_m', j, sep=''))
 }
 
-#### source plotting climatologies here <---- "calc_climat.R"
-#source("calc_climat.R")
+### source plotting climatologies here <---- "calc_climat.R
 
+source(paste(local_code_dir, "calc_climat.R", sep = '\\'))
 
 # associar aos dados de temp compilados (.CSVs)
