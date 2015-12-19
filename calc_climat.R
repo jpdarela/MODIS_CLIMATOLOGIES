@@ -1,8 +1,6 @@
-library(raster)
-library(rgdal)
+# auxiliary file ## DO NOT EXECUTE
 
-
-get_layers <- function(name_1='.', directory = "C:\\Estagio\\results\\annual")
+get_layers3 <- function(name_1='.', directory = "C:\\Estagio\\results\\annual")
 { 
 	curr_dir <- getwd()
 	setwd(directory)
@@ -27,10 +25,10 @@ shape <- readOGR(dsn="C:\\Estagio\\shape", layer="pn_kaparao")
 
 
 
-day_bands <- get_layers("da_mean_annual")   ### need to link this file to "temp_proc_kpr.R"
-night_bands <- get_layers("nt_mean_annual") ## Fix filenammes! This is wrong
-p025_bands <-  get_layers("_per_0025_annual_dn")
-p975_bands <- get_layers("_per_0975_annual_dn")
+day_bands <- get_layers3("da_mean_annual")   ### need to link this file to "temp_proc_kpr.R"
+night_bands <- get_layers3("nt_mean_annual") ## Fix filenammes! This is wrong
+p025_bands <-  get_layers3("_per_0025_annual_dn")
+p975_bands <- get_layers3("_per_0975_annual_dn")
 
 day_mean <- brick(day_bands)
 night_mean <- brick(night_bands)

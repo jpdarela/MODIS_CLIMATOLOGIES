@@ -1,11 +1,30 @@
+# Author JP Darela ___ https://github.com/jpdarela; https://www.facebook.com/darelafilho
+
+
 library(raster)
 library(rgdal)
 library(dplyr)
 
+
+# This Script was developed in WINDOWS NT 6.3.9600
+# R version: 3.1.2 Pumpkin Helmet
+# Note the use of "\\" in paths 
+
+# 1 - Open a R interpreter. Note the requirements to the packages: raster, rgdal,dplyr and dependencies 
+# 2 - Set working directory to the folder where you save this script
+# 3 - Make shure that the file "calc_climat.R" is located at the same folder than this script
+# 4 - Call this script using "source" function: Like this: 
+###                                                        > source("temp_calc_kpr.R")
+# 5 - WAIT
+
 ##### PART 1  ----  CREATING A DATA FRAME TO ACCESS DATA. 
 
 # images directory--- fill the variable "input_data_dir" with the pathway to your MOD11A2 images:
-input_data_dir = "C:\\Estagio\\raw_datav2\\tidy_data_v2"
+input_data_dir <- "C:\\Estagio\\raw_datav2\\tidy_data_v2"
+
+# new directory for lay results
+# change it if you want. Note the use of "\\" in paths 
+output_data_dir <- "C:\\Estagio"  
 
 filenames <- dir(input_data_dir)
 
@@ -178,7 +197,7 @@ calc_stats <- function(dataset, location_out, mode_c = 'annual', tag= 'testing')
 # Calcular as estatisticas:
 
 # CLIMATOLOGIES
-outpath = "C:\\Estagio\\results\\climat"
+outpath = paste(output_data_dir, "\\" , "results\\climat", sep='')
 if (!file.exists(outpath)) dir.create(outpath,recursive=T)
 print("CLIMAT")
 # climat dia
@@ -201,7 +220,7 @@ calc_stats(dataset_all, outpath, mode_c = 'climat', tag='all')
 
 # ANNUAL
 print("ANNUAL")
-outpath = "C:\\Estagio\\results\\annual"
+outpath = paste(output_data_dir, "\\" , "results\\annual", sep='')
 if (!file.exists(outpath)) dir.create(outpath, recursive=T)
 
 years <- levels(df$year)
@@ -219,7 +238,8 @@ for (i in years)
 
 #MONTHLY
 print("MONTHLY")
-outpath = "C:\\Estagio\\results\\monthly"
+outpath = "C:\\Estagio\\"
+outpath = paste(output_data_dir, "\\" , "results\\monthly", sep='')
 if (!file.exists(outpath)) dir.create(outpath, recursive=T)
 
 months <- levels(df$month)
@@ -236,4 +256,6 @@ for (j in months)
 
 #### source plotting climatologies here <---- "calc_climat.R"
 #source("calc_climat.R")
+
+
 # associar aos dados de temp compilados (.CSVs)
