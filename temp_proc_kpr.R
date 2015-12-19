@@ -234,4 +234,6 @@ for (j in months)
 	calc_stats(dataset_all, outpath, mode_c = 'monthly', tag=paste('all_m', j, sep=''))
 }
 
+#### source plotting climatologies here <---- "calc_climat.R"
+#source("calc_climat.R")
 # associar aos dados de temp compilados (.CSVs)
