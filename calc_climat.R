@@ -13,11 +13,10 @@ get_layers3 <- function(dtm='all', statistics_type = 'mean' , directory = paste(
  		x <- c(dir()[i], x[i])
  		d <- !is.na(x)
  		x <- x[d]
- 		#dataset <- stack(x)
+ 		dataset <- stack(x)
  	}
  	setwd(curr_dir)
- 	#dataset
- 	x
+ 	dataset
  }
 
 ### formal arguments for get_layers3
