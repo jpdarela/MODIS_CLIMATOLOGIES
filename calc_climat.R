@@ -19,7 +19,6 @@ get_layers <- function(name_1='.', directory = "C:\\Estagio\\results\\annual")
  	dataset
  }
 
-
 #ploting
 
 shape <- readOGR(dsn="C:\\Estagio\\shape", layer="pn_kaparao")
