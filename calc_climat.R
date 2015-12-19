@@ -75,7 +75,8 @@ p975_means <- extract(x=p975_temp, y=shape, fun=mean, na.rm=T, nl=16)
 p025_means <- extract(x=p025_temp, y=shape, fun=mean, na.rm=T, nl=16)
 
 ## Need to improve climatology plots
-plot(c(2000:2015),all_means,type="l",ylim=c(0,35),col="green",main= "all_mean", xlab="Year",ylab="Temperature (Celcius)")
+## need to automate plotting (y argument of plot function)
+plot(c(2000:2015),all_means,type="l",ylim=c(0,35),col="green",main= "all_mean", xlab="Year",ylab="Temperature (Celcius)") 
 x11()
 plot(c(2000:2015),day_means,type="l",ylim=c(0,35),col="green",main= "da_mean", xlab="Year",ylab="Temperature (Celcius)")
 x11()
