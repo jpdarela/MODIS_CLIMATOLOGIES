@@ -5,6 +5,8 @@
 Put all LST images in a new folder. 
 Read instructions in "temp_proc_kpr.R"
 
+code under development
+
 
 
 
