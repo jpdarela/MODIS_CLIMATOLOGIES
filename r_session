@@ -1,0 +1,86 @@
+print(y)
+f<- function(x){
+y<- 2*x
+print(x)
+print(y)
+print(z)
+}
+cube<- function(n){
+sq<- function()n*n
+n*sq
+}
+open.account<- function(total){
+list(
+deposit = function(amount){
+if(amount<=0)
+stop("deposits must be positives!","\n")
+total<<- total+amount
+cat(amount, "deposited. Your balance is", total,"\n\n")
+},
+withdraw= function(amount){
+if (amount>total)
+stop("you dont have that money!","\n")
+total<<- total-amount
+cat(amount, "withdraw. Your balance is",total,"\n\n")
+},
+balance= function() {
+cat("your balance is", total, "\n\n")
+}
+)
+}
+joe<- open.account(300)
+joe
+joe$withdraw(50)
+q()
+q()
+setwd("C:\\Estagio\\code\\MODIS_CLIMATOLOGIES")
+dir()
+output_data_dir <- "C:\\Estagio"  
+get_layers3 <- function(dtm='all', statistics_type = 'mean' , directory = paste(output_data_dir, "\\" , "results\\annual", sep=''))
+{ 
+curr_dir <- getwd()
+setwd(directory)
+ escape <- "\\w+"
+ if(length(i <- grep(paste(dtm, escape, statistics_type, escape, sep=''), dir())))
+ {
+ x <- c()
+ x <- c(dir()[i], x[i])
+ d <- !is.na(x)
+ x <- x[d]
+ dataset <- stack(x)
+ }
+ setwd(curr_dir)
+ dataset
+ }
+get_layers3()
+get_layers3 <- function(dtm='all', statistics_type = 'mean' , directory = paste(output_data_dir, "\\" , "results\\annual", sep=''))
+{ 
+curr_dir <- getwd()
+setwd(directory)
+ escape <- "\\w+"
+ if(length(i <- grep(paste(dtm, escape, statistics_type, escape, sep=''), dir())))
+ {
+ x <- c()
+ x <- c(dir()[i], x[i])
+ d <- !is.na(x)
+ x <- x[d]
+ #dataset <- stack(x)
+ }
+ setwd(curr_dir)
+ #dataset
+ x
+ }
+get_layers3()
+get_layers3('nig', med)
+get_layers3('nig', 'med')
+get_layers3('nig', 'per_0025')
+get_layers3('nig', 'med')
+dir()
+setwd("C:\\Estagio\\code\\MODIS_CLIMATOLOGIES")
+dir()
+source("temp_proc_kpr.R")
+input_data_dir <- "C:\\Estagio\\raw_datav2\\tidy_data_v2"
+dir(input_data_dir)
+dir()
+dir()
+source("C:\\Estagio\\code\\MODIS_CLIMATOLOGIES\\teste.R")
