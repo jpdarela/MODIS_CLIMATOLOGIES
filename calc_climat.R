@@ -40,6 +40,9 @@ p025_temp <- brick(p025_bands)
 
 # # Extract values
 
+# insert means (da+ni)
+# insert median
+
 day_means <- extract(x=day_mean,y=shape, fun=mean, na.rm=T, nl=16 )
 night_means <- extract(x=night_mean, y=shape,fun=mean, na.rm=T, nl=16)
 p975_means <- extract(x=p975_temp, y=shape, fun=mean, na.rm=T, nl=16)
