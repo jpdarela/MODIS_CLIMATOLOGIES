@@ -45,7 +45,7 @@ night_means <- extract(x=night_mean, y=shape,fun=mean, na.rm=T, nl=16)
 p975_means <- extract(x=p975_temp, y=shape, fun=mean, na.rm=T, nl=16)
 p025_means <- extract(x=p025_temp, y=shape, fun=mean, na.rm=T, nl=16)
 
-
+## Need to improve climatology plots
 plot(c(2000:2015),day_means,type="l",ylim=c(11,35),col="red",main= "da_mean", xlab="Year",ylab="Temperature (Celcius)")
 x11()
 plot(c(2000:2015),night_means,type="l",ylim=c(5,15),col="red",main= "nt_mean", xlab="Year",ylab="Temperature (Celcius)")
