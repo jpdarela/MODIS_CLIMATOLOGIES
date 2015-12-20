@@ -92,4 +92,4 @@ plot(c(2000:2015),p025_means,type="l",ylim=c(0,35),col="blue",main= "p 0.25", xl
 #	lty=c(2,1,1,2),col=c("red","red","blue","blue"),cex=1,y.intersp = 0.4,ncol=2)
 
 
-setwd("C:\\Estagio\\code")
+setwd(local_code_dir)
