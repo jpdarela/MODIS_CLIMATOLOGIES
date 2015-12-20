@@ -4,6 +4,7 @@
 # Created on: 2015-11-11 20:26:50.00000
 #jpDarela
 
+# This script crop and reproject original MODIS .hdf files for Kaparao area 
 import arcpy
 import os
 
