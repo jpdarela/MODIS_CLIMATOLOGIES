@@ -3,7 +3,7 @@
 #Author: jpDarela
 
 ## python 2.7.3 in windows 6.3.9600
-## require arcpy
+## require arcpy - ArcGIS 10.2.0.3348
 
 # This ArcGIS script reprojects and crops original MODIS.
 # HDF_EOS () files for some area (mask data) in the image. 
