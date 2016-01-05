@@ -2,9 +2,15 @@
 
 #Author: jpDarela
 
-# This ArcGIS script reprojects and crops original MODIS 
-# HDF_EOS files for Kaparao National Park area. 
+## python 2.7.3 in windows 6.3.9600
+## require arcpy
 
+# This ArcGIS script reprojects and crops original MODIS.
+# HDF_EOS () files for some area (mask data) in the image. 
+ 
+# REPROJECTION: from original (sinusoidal) for UTM_WGS84 24S 
+# CROP: a raster mask is provided in this repo. It is a GRID file named mask_data  
+# MODIS DATA: https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mod11a2
  
 import arcpy
 import os
@@ -12,7 +18,14 @@ import os
 # Check out any necessary licenses
 arcpy.CheckOutExtension("spatial")
 
-parent_dir = "C:\\Estagio\\raw_data\\new_dld_jp\\2014_data_MRT1447277855858"
+
+# 'parent_dir' is the pathway for the folder containing raw HDF_EOS (MOD11A2 product) files
+parent_dir = "your_pathway\\to_the\\folder\\with\\modis\\data " # Note the "\\".
+
+#'path2mask' is is the pathway for the mask data (shapefile or raster)
+# I provided a mask for Kaparao National Park in MODIS_CLIMATOLOGIES repo. 
+path2mask = "your_path_to_mask\\mask_data" # Note the "\\" 
+mask_data = arcpy.Raster(path2mask)
 
 arcpy.env.workspace = parent_dir
 os.chdir(parent_dir)
@@ -58,7 +71,6 @@ arcpy.env.workspace = prodata
 os.chdir(prodata) 
 
 lista = arcpy.ListDatasets()
-mask_data = arcpy.Raster("C:\\Estagio\\raw_datav2\\tidy_data_v2\\a00065lst_da")
 
 for img in lista:
     raster_file = arcpy.Raster(img)

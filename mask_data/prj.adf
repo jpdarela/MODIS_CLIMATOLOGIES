@@ -1,0 +1,6 @@
+Projection    UTM
+Zone          24
+Units         METERS
+Zunits        NO
+Yshift        10000000.0
+Parameters    6378137.0  6356752.314245179
