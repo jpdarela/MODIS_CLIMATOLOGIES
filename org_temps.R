@@ -22,14 +22,14 @@ for (i in filenames2)
 {
 	comp_data <- read.csv(i, stringsAsFactors=FALSE)
 
-	# for(i in c(1:dim(comp_data)[1]))
-	# {
-	# 	z <- split_date(comp_data[i,3])
+	for(i in c(1:dim(comp_data)[1]))
+	{
+	 	z <- split_date(comp_data[i,3])
 	# 	# HERE search for correspondent data in df
 	# 	# EXTRACT the LST in point
 	# 	# append to compiled temps 
-	# 	print(z)
-	# }
+	 	print(z)
+	 }
 
 	print(i)
 
