@@ -61,7 +61,7 @@ get_meta_data <- function(filename)
 
 	year_init <- paste("20", year,"-01-01" ,sep='')
 	year_fini <- paste("20", year,"-12-31" ,sep='')
-	dtm <- ifelse(day_string == 'da', "11:00", "23:00")
+	dtm <- ifelse(day_string == 'da', "13:00:00", "01:00:00")
 
 	date_lookup <- format(seq(as.Date(year_init), as.Date(year_fini), by = "1 day"))
 
