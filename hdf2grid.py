@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# ---------------------------------------------------------------------------
-# data_2014.py
-# Created on: 2015-11-11 20:26:50.00000
-#jpDarela
 
-# This script crop and reproject original MODIS .hdf files for Kaparao area 
+#Author: jpDarela
+
+# This ArcGIS script reprojects and crops original MODIS 
+# HDF_EOS files for Kaparao National Park area. 
+
+ 
 import arcpy
 import os
 
@@ -30,7 +31,7 @@ fn_vars = ['a14', 'da', 'ni']
 for img in hdf_files:
     day = str(img.split('.')[1][5:])
     for index in ['0', '4']:
-        outname = hdf2raster + '\\' + fn_vars[0] + day + 'lst' +'_'
+        outname = hdf2raster + '\\' + fn_vars[0] + day + 'lst' + '_'
         if index == '0':
             outname += 'da'
         else:
