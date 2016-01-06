@@ -1,5 +1,13 @@
 # auxiliary file ## DO NOT EXECUTE
 
+parent_dir <- getwd()
+
+df13 <- filter(df, year == 2013)
+df14 <- filter(df, year == 2014)
+
+df_13_14 <- rbind(df13,df14)
+df_13_14 <- data.frame(df_13_14)
+
 split_date <- function(input, sep = ' ')
 {
 	number <- strsplit(input, sep)
@@ -10,6 +18,7 @@ split_date <- function(input, sep = ' ')
 }
 
 comp_dir <- "C:\\Estagio\\organized_temps\\compiled_temps"
+point_coordinates <- read.csv("C:\\Estagio\\code\\MODIS_CLIMATOLOGIES\\obs_points\\obs_points.csv")
 filenames2 <- dir(comp_dir)
 setwd(comp_dir)
 
@@ -18,23 +27,47 @@ setwd(comp_dir)
 
 # not in filenames!
 # need to change it... 
-for (i in filenames2)
+for (file_ in filenames2)
 {
-	comp_data <- read.csv(i, stringsAsFactors=FALSE)
-
+	comp_data <- read.csv(file_, stringsAsFactors=FALSE)
+	# create a point feature here
+	print(file_)
 	for(i in c(1:dim(comp_data)[1]))
 	{
-	 	z <- split_date(comp_data[i,3])
+
+	 	date_time <- split_date(comp_data[i,3])
+	 	df_aux <- df_13_14
+	 	for (line in 1:dim(df_aux)[1])
+	 	{	
+	 		if (file_ %in% c("pm1.csv", 'sm1.csv', 'sm2.csv', 'terr2.csv')){test <- as.Date(date_time[1])}
+	 		else if (file_ %in% c('pm2.csv')){test <- as.Date(date_time[1], format="%m/%d/%y")}
+	 		else{test <- as.Date(date_time[1], format="%m/%d/%Y")}
+
+	 		if (as.Date(df_aux[line, 1]) == test)
+	 		{
+	 			comp_hour_num <- as.numeric(strsplit(date_time[2],':')[[1]][1])
+	 			modi_hour_num <- as.numeric(strsplit(df_aux[line,2],':')[[1]][1])
+	 			if(modi_hour_num == comp_hour_num)
+	 			{
+	 				path_to_raster <- df_aux[line, 7]
+	 				
+	 				cat('data',date_time, as.character(path_to_raster), '\n', sep='---')	
+	 			}
+	 		}
+	 		else{
+	 			#cat('not_match\n')
+	 			next}
+	 	}
+	}	
 	# 	# HERE search for correspondent data in df
 	# 	# EXTRACT the LST in point
 	# 	# append to compiled temps 
-	 	print(z)
-	 }
 
-	print(i)
 
-	print(dim(comp_data))
-	print(colnames(comp_data))
+	#print(i)
+
+	#print(dim(comp_data))
+	#print(colnames(comp_data))
 }
 
 # date_df <- paste(df[1,1], df[1,2],sep=' ')
@@ -46,7 +79,7 @@ for (i in filenames2)
 # date_df - date_df2
 
 #tbl <- read.csv("C:\\Estagio\\organized_temps\\compiled_temps\\inters.csv", stringsAsFactor=F)
-
+setwd(parent_dir)
 
 
 
