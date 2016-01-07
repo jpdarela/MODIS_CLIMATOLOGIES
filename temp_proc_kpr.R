@@ -201,64 +201,64 @@ calc_stats <- function(dataset, location_out, mode_c = 'annual', tag= 'testing')
 		format='GTiff',overwrite=TRUE)
 } 
 #-------------------------------------------------------------------------------------------
-# Calcular as estatisticas:
+Calcular as estatisticas:
 
-# # CLIMATOLOGIES
-# outpath = paste(output_data_dir, "\\" , "results\\climat", sep='')
-# if (!file.exists(outpath)) dir.create(outpath,recursive=T)
-# print("CLIMAT")
-# # climat dia
-# dataset_day <- get_layers2('da')
+# CLIMATOLOGIES
+outpath = paste(output_data_dir, "\\" , "results\\climat", sep='')
+if (!file.exists(outpath)) dir.create(outpath,recursive=T)
+print("CLIMAT")
+# climat dia
+dataset_day <- get_layers2('da')
 
-# # climat noite
-# dataset_nit <- get_layers2('ni')
+# climat noite
+dataset_nit <- get_layers2('ni')
 
-# # climat tudo
-# setwd(input_data_dir)
-# dataset_all <- stack(filenames)
-# dataset_all <- brick(dataset_all)
+# climat tudo
+setwd(input_data_dir)
+dataset_all <- stack(filenames)
+dataset_all <- brick(dataset_all)
 
-# print("datasets_assembled... calc and saving")
+print("datasets_assembled... calc and saving")
 
-# ## Calc ans saving results
-# calc_stats(dataset_day, outpath, mode_c = 'climat', tag='day')
-# calc_stats(dataset_nit, outpath, mode_c = 'climat', tag='nig')
-# calc_stats(dataset_all, outpath, mode_c = 'climat', tag='all')
+## Calc ans saving results
+calc_stats(dataset_day, outpath, mode_c = 'climat', tag='day')
+calc_stats(dataset_nit, outpath, mode_c = 'climat', tag='nig')
+calc_stats(dataset_all, outpath, mode_c = 'climat', tag='all')
 
-# # ANNUAL
-# print("ANNUAL")
-# outpath = paste(output_data_dir, "\\" , "results\\annual", sep='')
-# if (!file.exists(outpath)) dir.create(outpath, recursive=T)
+# ANNUAL
+print("ANNUAL")
+outpath = paste(output_data_dir, "\\" , "results\\annual", sep='')
+if (!file.exists(outpath)) dir.create(outpath, recursive=T)
 
-# years <- levels(df$year)
-# for (i in years) 
-# {
-# 	dataset_day <- get_layers(df, month_mode = F, all_dtm_mode = F, yearc= i, dtm='da')
-# 	dataset_nit <- get_layers(df, month_mode = F, all_dtm_mode = F, yearc= i, dtm='ni')
-# 	dataset_all <- get_layers(df, month_mode = F, all_dtm_mode = T, yearc= i)
+years <- levels(df$year)
+for (i in years) 
+{
+	dataset_day <- get_layers(df, month_mode = F, all_dtm_mode = F, yearc= i, dtm='da')
+	dataset_nit <- get_layers(df, month_mode = F, all_dtm_mode = F, yearc= i, dtm='ni')
+	dataset_all <- get_layers(df, month_mode = F, all_dtm_mode = T, yearc= i)
 
-# 	calc_stats(dataset_day, outpath, mode_c = 'annual', tag=paste('day_', i, sep=''))
-# 	calc_stats(dataset_nit, outpath, mode_c = 'annual', tag=paste('nig_', i, sep=''))
-# 	calc_stats(dataset_all, outpath, mode_c = 'annual', tag=paste('all_', i, sep=''))
+	calc_stats(dataset_day, outpath, mode_c = 'annual', tag=paste('day_', i, sep=''))
+	calc_stats(dataset_nit, outpath, mode_c = 'annual', tag=paste('nig_', i, sep=''))
+	calc_stats(dataset_all, outpath, mode_c = 'annual', tag=paste('all_', i, sep=''))
 
-# }
+}
 
-# #MONTHLY
-# print("MONTHLY")
-# outpath = paste(output_data_dir, "\\" , "results\\monthly", sep='')
-# if (!file.exists(outpath)) dir.create(outpath, recursive=T)
+#MONTHLY
+print("MONTHLY")
+outpath = paste(output_data_dir, "\\" , "results\\monthly", sep='')
+if (!file.exists(outpath)) dir.create(outpath, recursive=T)
 
-# months <- levels(df$month)
-# for (j in months) 
-# {
-# 	dataset_day <- get_layers(df, month_mode = T, all_dtm_mode = F, monthc = j, dtm='da')
-# 	dataset_nit <- get_layers(df, month_mode = T, all_dtm_mode = F, monthc = j, dtm='ni')
-# 	dataset_all <- get_layers(df, month_mode = T, all_dtm_mode = T, monthc = j)
+months <- levels(df$month)
+for (j in months) 
+{
+	dataset_day <- get_layers(df, month_mode = T, all_dtm_mode = F, monthc = j, dtm='da')
+	dataset_nit <- get_layers(df, month_mode = T, all_dtm_mode = F, monthc = j, dtm='ni')
+	dataset_all <- get_layers(df, month_mode = T, all_dtm_mode = T, monthc = j)
 
-# 	calc_stats(dataset_day, outpath, mode_c = 'monthly', tag=paste('day_m', j, sep=''))
-# 	calc_stats(dataset_nit, outpath, mode_c = 'monthly', tag=paste('nig_m', j, sep=''))
-# 	calc_stats(dataset_all, outpath, mode_c = 'monthly', tag=paste('all_m', j, sep=''))
-# }
+	calc_stats(dataset_day, outpath, mode_c = 'monthly', tag=paste('day_m', j, sep=''))
+	calc_stats(dataset_nit, outpath, mode_c = 'monthly', tag=paste('nig_m', j, sep=''))
+	calc_stats(dataset_all, outpath, mode_c = 'monthly', tag=paste('all_m', j, sep=''))
+}
 
 # ### source plotting climatologies here <---- "calc_climat.R
 
