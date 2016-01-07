@@ -75,16 +75,16 @@ p025_means <- extract(x=p025_temp, y=shape, fun=mean, na.rm=T, nl=16)
 ## Need to improve climatology plots
 ## need to automate plotting (y argument of plot function)
 
+x_axis <- levels(df$year)
+plot(x_axis,all_means,type="l",ylim=c(0,35),col="green",main= "all_mean", xlab="Year",ylab="Temperature (Celcius)") 
 
-plot(levels(df$year),all_means,type="l",ylim=c(0,35),col="green",main= "all_mean", xlab="Year",ylab="Temperature (Celcius)") 
-x11()
-plot(levels(df$year),day_means,type="l",ylim=c(0,35),col="green",main= "da_mean", xlab="Year",ylab="Temperature (Celcius)")
-x11()
-plot(levels(df$year),night_means,type="l",ylim=c(0,35),col="green",main= "nt_mean", xlab="Year",ylab="Temperature (Celcius)")
-x11()
-plot(levels(df$year),p975_means,type="l",ylim=c(0,35),col="red",main= "p 97.5", xlab="Year",ylab="Temperature (Celcius)")
-x11()
-plot(levels(df$year),p025_means,type="l",ylim=c(0,35),col="blue",main= "p 0.25", xlab="Year",ylab="Temperature (Celcius)")
+lines(x_axis,day_means,type="l",ylim=c(0,35),col="green",main= "da_mean", xlab="Year",ylab="Temperature (Celcius)")
+
+lines(x_axis,night_means,type="l",ylim=c(0,35),col="green",main= "nt_mean", xlab="Year",ylab="Temperature (Celcius)")
+
+lines(x_axis,p975_means,type="l",ylim=c(0,35),col="red",main= "p 97.5", xlab="Year",ylab="Temperature (Celcius)")
+
+lines(x_axis,p025_means,type="l",ylim=c(0,35),col="blue",main= "p 0.25", xlab="Year",ylab="Temperature (Celcius)")
 
 #lines(2000:2015,night_means,col="blue")
 #lines(2000:2015,p975_means,lty=2,col="red")
