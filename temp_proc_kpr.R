@@ -92,7 +92,7 @@ for (filename in filenames)
 rownames(line) <- seq(1,dim(line)[1])
 colnames(line) <- c('date', 'hour', 'j_day', 'day_time', 'month', 'year', 'filename')
 df <- data.frame(line, stringsAsFactors=FALSE)
-indexes <- c(4,5,6)
+indexes <- c(3, 4 , 5, 6)
 for (i in indexes)
 {
 	df[,i] <- as.factor(df[,i])
@@ -104,25 +104,36 @@ df <- tbl_df(df)  # this table dataframe will be our data_struct_access
 #---------------------------------------------------------------------------------
 
 
-##### PART TWO ---- defining functions to calculate climatologies, monthly means and 
-##### annual means for day, night and day+night
+##### PART TWO ---- defining functions to  select rasters and calculate climatologies: 
+####  weekly, monthly, yearly and in total time series for day, night and day+night
 
-get_layers <- function(data_struct_access, month_mode = FALSE, 
-	all_dtm_mode=FALSE, monthc=1, yearc='2000', dtm='da' )
-{
-	if (month_mode)
+get_layers <- function(data_struct_access, week_mode= FALSE, month_mode = FALSE, 
+	all_dtm_mode=FALSE, yearc='2000', monthc=1,  dtm='da', julian_day= '1')
+{	
+	if (!week_mode)
 	{
-		if (!all_dtm_mode) {df <- filter(data_struct_access, month == monthc, day_time == dtm)}
-		else {df <- filter(data_struct_access, month == monthc)}
+		if (month_mode)
+		{
+			if (!all_dtm_mode) {df <- filter(data_struct_access, month == monthc, day_time == dtm)}
+			else {df <- filter(data_struct_access, month == monthc)}
+		}
+		else
+		{
+			if(!all_dtm_mode) {df <- filter(data_struct_access, year == yearc, day_time == dtm)}
+			else {df <- filter(data_struct_access, year == yearc)}		
+		}
+		dataset <- stack(df$filename)
+		dataset <- brick(dataset) #stack and brick 
+		dataset
 	}
 	else
 	{
-		if(!all_dtm_mode) {df <- filter(data_struct_access, year == yearc, day_time == dtm)}
-		else {df <- filter(data_struct_access, year == yearc)}		
+		if(!all_dtm_mode) {df <- filter(data_struct_access, j_day == julian_day, day_time == dtm)}
+		else {df <- filter(data_struct_access, j_day == julian_day)}
+	    dataset <- stack(df$filename)
+		dataset <- brick(dataset) #stack and brick 
+		dataset
 	}
-	dataset <- stack(df$filename)
-	dataset <- brick(dataset) #stack and brick 
-	dataset
 }
 
 ## USAGE EXAMPLE FOR get_layers(): 
@@ -200,33 +211,36 @@ calc_stats <- function(dataset, location_out, mode_c = 'annual', tag= 'testing')
 	writeRaster(percentile_025, paste(location_out,'\\', tag, '_per_0025_', mode_c, '.tif', sep=''),
 		format='GTiff',overwrite=TRUE)
 } 
-#-------------------------------------------------------------------------------------------
-# PART 3
+## END of PART 2
+##-------------------------------------------------------------------------------------------
+
+# PART 3 - CALCULATING STATS AND SAVING RESULTS
 
 # CLIMATOLOGIES
+
 outpath = paste(output_data_dir, "\\" , "results\\climat", sep='')
 if (!file.exists(outpath)) dir.create(outpath,recursive=T)
-print("CLIMAT")
-# climat dia
+
+# climat day
 dataset_day <- get_layers2('da')
 
-# climat noite
+# climat night
 dataset_nit <- get_layers2('ni')
 
-# climat tudo
+# climat all
 setwd(input_data_dir)
 dataset_all <- stack(filenames)
 dataset_all <- brick(dataset_all)
 
-print("datasets_assembled... calc and saving")
-
-## Calc ans saving results
+## Calc and saving results
 calc_stats(dataset_day, outpath, mode_c = 'climat', tag='day')
 calc_stats(dataset_nit, outpath, mode_c = 'climat', tag='nig')
 calc_stats(dataset_all, outpath, mode_c = 'climat', tag='all')
+#--------------------------------------------------------------
+
 
 # ANNUAL
-print("ANNUAL")
+
 outpath = paste(output_data_dir, "\\" , "results\\annual", sep='')
 if (!file.exists(outpath)) dir.create(outpath, recursive=T)
 
@@ -242,9 +256,11 @@ for (i in years)
 	calc_stats(dataset_all, outpath, mode_c = 'annual', tag=paste('all_', i, sep=''))
 
 }
+#--------------------------------------------------------------
+
 
 #MONTHLY
-print("MONTHLY")
+
 outpath = paste(output_data_dir, "\\" , "results\\monthly", sep='')
 if (!file.exists(outpath)) dir.create(outpath, recursive=T)
 
@@ -259,9 +275,11 @@ for (j in months)
 	calc_stats(dataset_nit, outpath, mode_c = 'monthly', tag=paste('nig_m', j, sep=''))
 	calc_stats(dataset_all, outpath, mode_c = 'monthly', tag=paste('all_m', j, sep=''))
 }
+#--------------------------------------------------------------
 
-# ### source plotting climatologies here <---- "calc_climat.R
 
-source(paste(local_code_dir, "calc_climat.R", sep = '\\'))
+## WEEKLY COMPOSITES
 
 # associar aos dados de temp compilados (.CSVs)
+
+## END OF PART 3
