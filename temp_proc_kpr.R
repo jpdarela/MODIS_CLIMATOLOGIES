@@ -280,6 +280,25 @@ for (j in months)
 
 ## WEEKLY COMPOSITES
 
-# associar aos dados de temp compilados (.CSVs)
+outpath = paste(output_data_dir, "\\" , "results\\weekly", sep='')
+if (!file.exists(outpath)) dir.create(outpath, recursive=T)
+
+week_composites <- levels(df$j_day)
+for (k in week_composites)
+{
+	dataset_day <- get_layers(df, week_mode=T, all_dtm_mode = F, dtm='da', julian_day = k)
+	dataset_nit <- get_layers(df, week_mode=T, all_dtm_mode = F, dtm='ni', julian_day = k)
+	dataset_all <- get_layers(df, week_mode=T, all_dtm_mode = T, dtm='all', julian_day = k)
+	
+	calc_stats(dataset_day, outpath, mode_c = 'week_comp', tag=paste('day_d', k, sep=''))
+	calc_stats(dataset_nit, outpath, mode_c = 'week_comp', tag=paste('nig_d', k, sep=''))
+ 	calc_stats(dataset_all, outpath, mode_c = 'week_comp', tag=paste('all_d', k, sep=''))
+}
 
 ## END OF PART 3
+
+## --------------------------------------------------------
+##                         ... 
+### source plotting climatologies script here <---- "calc_climat.R
+
+source(paste(local_code_dir, "calc_climat.R", sep = '\\'))
