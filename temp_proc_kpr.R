@@ -201,7 +201,7 @@ calc_stats <- function(dataset, location_out, mode_c = 'annual', tag= 'testing')
 		format='GTiff',overwrite=TRUE)
 } 
 #-------------------------------------------------------------------------------------------
-Calcular as estatisticas:
+# PART 3
 
 # CLIMATOLOGIES
 outpath = paste(output_data_dir, "\\" , "results\\climat", sep='')
