@@ -22,7 +22,7 @@ point_coordinates <- read.csv("C:\\Estagio\\code\\MODIS_CLIMATOLOGIES\\obs_point
 filenames2 <- dir(comp_dir)
 setwd(comp_dir)
 
-#read the shapefile(points of observations)
+#read the shapefile(observations points)
 # iterates over shapefile points
 
 # not in filenames!
@@ -59,28 +59,6 @@ for (file_ in filenames2)
 	 			next}
 	 	}
 	}	
-	# 	# HERE search for correspondent data in df
-	# 	# EXTRACT the LST in point
-	# 	# append to compiled temps 
-
-
-	#print(i)
-
-	#print(dim(comp_data))
-	#print(colnames(comp_data))
 }
 
-# date_df <- paste(df[1,1], df[1,2],sep=' ')
-# date_df <- as.POSIXct(date_df)
-
-# date_df2 <- as.POSIXct(df2[567,3])
-# setwd('C:\\Estagio\\code')
-
-# date_df - date_df2
-
-#tbl <- read.csv("C:\\Estagio\\organized_temps\\compiled_temps\\inters.csv", stringsAsFactor=F)
 setwd(parent_dir)
-
-
-
-
