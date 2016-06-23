@@ -1,57 +1,15 @@
-# Author JP Darela ___ https://github.com/jpdarela; https://www.facebook.com/darelafilho
-
-
-library(raster)
 library(rgdal)
 library(dplyr)
+library(raster)
 
 
-# This R Script was developed in WINDOWS NT 6.3.9600
-# R version: 3.1.2 Pumpkin Helmet
-# Note the use of "\\" in paths 
-
-# 0 - Save the code (files: "calc_climat.R" and "temp_proc_kpr.R") in your computer (catch the path to it)
-# 0 - Save MODIS (as specified in "README.md") images in your computer. You must to save all images in one
-    # separeted folder (no other files than modis images)
-# 1 - Open a R interpreter. Note the requirements to the packages: raster, rgdal,dplyr and dependencies 
-# 2 - Set working directory to the folder where you save this script (see lines 13 and (25 to 29))
-# 3 - Make shure that the file "calc_climat.R" is located at the same folder than this script
-# 4 - Call this script using "source" function: Like this: 
-###                                                        > source("temp_calc_kpr.R")
-# 5 - WAIT
-
-##### PART 1  ----  CREATING A DATA FRAME TO ACCESS DATA. 
-
-# images directory--- fill the variable "input_data_dir" with the pathway to your MOD11A2 images:
 input_data_dir <- "C:\\Estagio\\raw_datav2\\tiles\\h12v11"
-
-#code directory --- it must be your 
 local_code_dir <- getwd()
+output_data_dir = "C:\\Estagio_t2\\new_results2"
 
-# new directory for lay results
-# change it if you want. Note the use of "\\" in paths 
-output_data_dir = "C:\\Estagio_t2"
 
 get_meta_data <- function(filename)
 {
-	# This function is intendend to help the construction of a 
-	# dataframe for data access.
-	#--------------------------------------------------------------
-
-	# These 3 variables get the metadada (year, day time and julian day) from file name.
-	#year <- substr(filename,2,3)
-	#day_time <- substr(filename,11,12)
-	#year_day <- as.numeric(substr(filename,4,6))
-#
-	# I changed the original filenames
-	# Example : from "MOD11A2.MRTWEB.A2000217.005.LST_Night_1km" to  "a00217lst_ni"
-	# if you want to use the former form of the filename then you might to change the
-	# above block of code...
-	#                                                                     10        20        30        40
-        #                                                            12345678901234567890123456789012345678901	
-	# For example: assuming that your filenames are in the form "MOD11A2.MRTWEB.A2000217.005.LST_Night_1km"
-	# your 3 variables migth be assigned this way:
-
 	year =  substr(filename,19,20)
 	day_time <- substr(filename,40,41)
 	year_day <- as.numeric(substr(filename,21,23))
@@ -69,12 +27,97 @@ get_meta_data <- function(filename)
 		substr(date_lookup[year_day],6,7),paste(substr(date_lookup[year_day],1,4), sep=''),
 		paste(input_data_dir, filename, sep='\\'))
 	result
-	## END OF FUNCTION DEFINITION
 }
 
+
+get_layers <- function(data_struct_access, week_mode= FALSE, month_mode = FALSE, 
+	all_dtm_mode=FALSE, yearc='2000', monthc=1,  dtm='da', julian_day= '1')
+{	
+	if (!week_mode)
+	{
+		if (month_mode)
+		{
+			if (!all_dtm_mode) {df <- filter(data_struct_access, month == monthc, day_time == dtm)}
+			else {df <- filter(data_struct_access, month == monthc)}
+		}
+		else
+		{
+			if(!all_dtm_mode) {df <- filter(data_struct_access, year == yearc, day_time == dtm)}
+			else {df <- filter(data_struct_access, year == yearc)}		
+		}
+		dataset <- stack(df$filename)
+		#dataset <- brick(dataset) #stack and brick 
+		dataset
+	}
+	else
+	{
+		if(!all_dtm_mode) {df <- filter(data_struct_access, j_day == julian_day, day_time == dtm)}
+		else {df <- filter(data_struct_access, j_day == julian_day)}
+	    dataset <- stack(df$filename)
+		#dataset <- brick(dataset) #stack and brick 
+		dataset
+	}
+}
+
+
+calc_stats <- function(dataset, location_out= 'a', mode_c = 'annual', tag= 'testing')
+{
+	nlayers <- dim(dataset)[3]
+	dataset_list <- list()
+	
+	#dataset <- dataset * 0.02
+	
+	for (i in c(1:nlayers))
+	{
+		layer_ <- raster(dataset, layer=i)
+		layer_[layer_ == 0] <- NA
+		std_ <- cellStats(layer_, sd)
+		mean_ <- cellStats(layer_, mean)
+		outliar_out <- mean_ - (std_)
+		
+		layer_[layer_ <= outliar_out] <- NA
+		layer_ <- layer_ * 0.02
+		layer_ <- layer_ - 273.15
+		dataset_list[i] <- layer_
+	}
+		
+	dataset <- stack(dataset_list)
+	dataset <- brick(dataset)
+	dataset
+
+	# stats calcs(
+	mn <- calc(dataset, fun=min, na.rm=T)
+	mx <- calc(dataset, fun=max, na.rm=T)
+	mean_ <- calc(dataset, fun=mean, na.rm=T)
+	median <- calc(dataset, fun = median, na.rm=T)
+	std <- calc(dataset, fun=sd, na.rm=T)
+	q_025 <- function(z,...){quantile(z, probs=c(0.025,NA,NA,NA,NA),na.rm=T)}
+	q_975 <- function(z1,...){quantile(z1, probs=c(0.975,NA,NA,NA,NA),na.rm=T)}
+
+	percentile_975 <- calc(dataset, fun=q_975)
+	percentile_025 <- calc(dataset, fun=q_025)
+	percentile_975 <- raster(percentile_975, layer=1)
+	percentile_025 <- raster(percentile_025, layer=1)
+
+	writeRaster(mn, paste(location_out,'\\', tag, '_min_', mode_c, '.tif', sep=''),
+		format='GTiff',overwrite=TRUE)
+	writeRaster(mx, paste(location_out,'\\', tag, '_max_', mode_c, '.tif', sep=''),
+		format='GTiff',overwrite=TRUE)
+	writeRaster(mean_, paste(location_out,'\\', tag, '_mean_', mode_c, '.tif', sep=''),
+		format='GTiff',overwrite=TRUE)
+	writeRaster(std, paste(location_out,'\\', tag, '_std_', mode_c, '.tif', sep=''),
+		format='GTiff',overwrite=TRUE)
+	writeRaster(median, paste(location_out,'\\', tag, '_med_', mode_c, '.tif', sep=''),
+		format='GTiff',overwrite=TRUE)
+	writeRaster(percentile_975, paste(location_out,'\\', tag, '_per_0975_', mode_c, '.tif', sep=''),
+		format='GTiff',overwrite=TRUE)
+	writeRaster(percentile_025, paste(location_out,'\\', tag, '_per_0025_', mode_c, '.tif', sep=''),
+		format='GTiff',overwrite=TRUE)
+
+}
+#######____________________________________________________________________________________________
+
 filenames <- dir(input_data_dir)
-
-
 counter <- 1
 for (filename in filenames)
 {
@@ -97,120 +140,8 @@ for (i in indexes)
 {
 	df[,i] <- as.factor(df[,i])
 }
+df <- tbl_df(df)
 
-df <- tbl_df(df)  # this table dataframe will be our data_struct_access 
-
-##### END OF PART ONE
-#---------------------------------------------------------------------------------
-
-
-##### PART TWO ---- defining functions to  select rasters and calculate climatologies: 
-####  weekly, monthly, yearly and in total time series for day, night and day+night
-
-get_layers <- function(data_struct_access, week_mode= FALSE, month_mode = FALSE, 
-	all_dtm_mode=FALSE, yearc='2000', monthc=1,  dtm='da', julian_day= '1')
-{	
-	if (!week_mode)
-	{
-		if (month_mode)
-		{
-			if (!all_dtm_mode) {df <- filter(data_struct_access, month == monthc, day_time == dtm)}
-			else {df <- filter(data_struct_access, month == monthc)}
-		}
-		else
-		{
-			if(!all_dtm_mode) {df <- filter(data_struct_access, year == yearc, day_time == dtm)}
-			else {df <- filter(data_struct_access, year == yearc)}		
-		}
-		dataset <- stack(df$filename)
-		dataset <- brick(dataset) #stack and brick 
-		dataset
-	}
-	else
-	{
-		if(!all_dtm_mode) {df <- filter(data_struct_access, j_day == julian_day, day_time == dtm)}
-		else {df <- filter(data_struct_access, j_day == julian_day)}
-	    dataset <- stack(df$filename)
-		dataset <- brick(dataset) #stack and brick 
-		dataset
-	}
-}
-
-## USAGE EXAMPLE FOR get_layers(): 
-## dataset <- get_layers(df, month_mode = T, all_dtm_mode = F, monthc=12, dtm='da')
-## this assigns to "dataset" a RasterBrick object containing (all) day images for december
-
-get_layers2 <- function(dtm = 'Da', directory = input_data_dir)
-{ 
-	curr_dir <- getwd()
-	setwd(directory)
- 	escape <- "\\w+"
- 	if(length(i <- grep(paste(escape,dtm,sep=''), dir())))
- 	{
- 		x <- c()
- 		x <- c(dir()[i], x[i])
- 		d <- !is.na(x)
- 		x <- x[d]
- 		dataset <- stack(x)
- 	}
- 	setwd(curr_dir)
- 	dataset <- brick(dataset)
- 	dataset
- }
-
-
-calc_stats <- function(dataset, location_out, mode_c = 'annual', tag= 'testing')
-{
-
-	# define a function for calc climatologies
-	# and WRITE OUTPUTS
-	
-	#parameters
-	# dataset <- your RasterBrick
-	#location_out <- output pathway
-	#mode_c <- string --- temporal analysis type
-	#tag <- some identifier to you results
-	 	
-	## transform data and clean bad cells 
-	dataset <- (dataset * 0.02) - 273.15
-	dataset[(dataset + 273.15) < 0.1] <- NA
-
-	## stats calcs(
-	mn <- calc(dataset, fun=min, na.rm=T)
-	mx <- calc(dataset, fun=max, na.rm=T)
-	mean_ <- calc(dataset, fun=mean, na.rm=T)
-	median <- calc(dataset, fun = median, na.rm=T)
-	std <- calc(dataset, fun=sd, na.rm=T)
-
-	##############################
-	#percentiles.
-
-	q_025 <- function(z,...){quantile(z, probs=c(0.025,NA,NA,NA,NA),na.rm=T)}
-
-	q_975 <- function(z1,...){quantile(z1, probs=c(0.975,NA,NA,NA,NA),na.rm=T)}
-
-	percentile_975 <- calc(dataset, fun=q_975)
-	percentile_025 <- calc(dataset, fun=q_025)
-
-	percentile_975 <- raster(percentile_975, layer=1)
-	percentile_025 <- raster(percentile_025, layer=1)
-	#write output
-
-	writeRaster(mn, paste(location_out,'\\', tag, '_min_', mode_c, '.tif', sep=''),
-		format='GTiff',overwrite=TRUE)
-	writeRaster(mx, paste(location_out,'\\', tag, '_max_', mode_c, '.tif', sep=''),
-		format='GTiff',overwrite=TRUE)
-	writeRaster(mean_, paste(location_out,'\\', tag, '_mean_', mode_c, '.tif', sep=''),
-		format='GTiff',overwrite=TRUE)
-	writeRaster(std, paste(location_out,'\\', tag, '_std_', mode_c, '.tif', sep=''),
-		format='GTiff',overwrite=TRUE)
-	writeRaster(median, paste(location_out,'\\', tag, '_med_', mode_c, '.tif', sep=''),
-		format='GTiff',overwrite=TRUE)
-	writeRaster(percentile_975, paste(location_out,'\\', tag, '_per_0975_', mode_c, '.tif', sep=''),
-		format='GTiff',overwrite=TRUE)
-	writeRaster(percentile_025, paste(location_out,'\\', tag, '_per_0025_', mode_c, '.tif', sep=''),
-		format='GTiff',overwrite=TRUE)
-} 
 ## END of PART 2
 ##-------------------------------------------------------------------------------------------
 
@@ -279,21 +210,21 @@ calc_stats <- function(dataset, location_out, mode_c = 'annual', tag= 'testing')
 #
 
 ## WEEKLY COMPOSITES
-
-outpath = paste(output_data_dir, "\\" , "results\\weekly", sep='')
-if (!file.exists(outpath)) dir.create(outpath, recursive=T)
-
-week_composites <- levels(df$j_day)
-for (k in week_composites)
-{
-	dataset_day <- get_layers(df, week_mode=T, all_dtm_mode = F, dtm='da', julian_day = k)
-	dataset_nit <- get_layers(df, week_mode=T, all_dtm_mode = F, dtm='ni', julian_day = k)
-	dataset_all <- get_layers(df, week_mode=T, all_dtm_mode = T, dtm='all', julian_day = k)
-	
-	calc_stats(dataset_day, outpath, mode_c = 'week_comp', tag=paste('day_d', k, sep=''))
-	calc_stats(dataset_nit, outpath, mode_c = 'week_comp', tag=paste('nig_d', k, sep=''))
- 	calc_stats(dataset_all, outpath, mode_c = 'week_comp', tag=paste('all_d', k, sep=''))
-}
+# 
+# outpath = paste(output_data_dir, "\\" , "results\\weekly", sep='')
+# if (!file.exists(outpath)) dir.create(outpath, recursive=T)
+# 
+# week_composites <- levels(df$j_day)
+# for (k in week_composites)
+# {
+# 	dataset_day <- get_layers(df, week_mode=T, all_dtm_mode = F, dtm='da', julian_day = k)
+# 	dataset_nit <- get_layers(df, week_mode=T, all_dtm_mode = F, dtm='ni', julian_day = k)
+# 	dataset_all <- get_layers(df, week_mode=T, all_dtm_mode = T, dtm='all', julian_day = k)
+# 	
+# 	calc_stats(dataset_day, outpath, mode_c = 'week_comp', tag=paste('day_d', k, sep=''))
+# 	calc_stats(dataset_nit, outpath, mode_c = 'week_comp', tag=paste('nig_d', k, sep=''))
+#  	calc_stats(dataset_all, outpath, mode_c = 'week_comp', tag=paste('all_d', k, sep=''))
+# }
 
 ## END OF PART 3
 
